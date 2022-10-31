@@ -41,7 +41,7 @@ app.get("/getUniverseId", (req, res) => {
     request.end();
 });
 
-app.get('/getGameInfo', (req, res) => {
+app.get('/getGameIcon', (req, res) => {
     if (!req.query.universeId) return;
     let body;
     let data = '';

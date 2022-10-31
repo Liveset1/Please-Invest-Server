@@ -46,7 +46,7 @@ app.get('/getGameInfo', (req, res) => {
     let body;
     let data = '';
 
-    const request = https.request('https://games.roblox.com/v1/games?universeIds=' + req.query.universeId, (response) => {
+    const request = https.request(`https://games.roblox.com/v2/games/${req.query.universeId}/media`, (response) => {
         response.setEncoding("utf-8");
         response.on('data', (chunk) => {
             data = data + chunk.toString();

@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/Liveset1/Please-Invest-Server/issues"
   },
-  "homepage": "https://github.com/Liveset1/Please-Invest-Server#readme"
+  "homepage": "https://github.com/Liveset1/Please-Invest-Server#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
 }

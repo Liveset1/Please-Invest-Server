@@ -41,12 +41,59 @@ app.get("/getUniverseId", (req, res) => {
     request.end();
 });
 
-app.get('/getGameIcon', (req, res) => {
+app.get('/getGamepasses', (req, res) => {
     if (!req.query.universeId) return;
     let body;
     let data = '';
 
-    const request = https.request(`https://games.roblox.com/v2/games/${req.query.universeId}/media`, (response) => {
+    const request = https.request(`https://games.roblox.com/v1/games/${req.query.universeId}/game-passes?limit=10&sortOrder=Asc`, (response) => {
+        response.setEncoding("utf-8");
+        response.on('data', (chunk) => {
+            data = data + chunk.toString();
+        });
+
+        response.on('end', () => {
+            try {
+                body = JSON.parse(data);
+                console.log(body);
+                res.send(JSON.stringify({ success: true, Info: body}));
+            } catch {
+                let message = "An error occured: " +  response.statusMessage;
+                console.log("An error occured when parsing response!");
+                res.send(JSON.stringify({ success: false, message: message}));
+            }
+        });
+    });
+
+    request.on('response', (res) => {
+        try {
+            let message = "An error occured: " +  res.statusMessage;
+            console.log(message);
+            res.send(JSON.stringify({ success: false, message: message}));
+        } catch {
+            console.log("An error occured when receiving response!");
+        }
+    });
+
+    request.on('error', (error) => {
+        try {
+            let message = "An error occured: " +  error;
+            console.log(message);
+            res.send(JSON.stringify({ success: false, message:  message}));
+        } catch {
+            console.log("An error occured when receiving response!");
+        }
+    });
+
+    request.end();
+});
+
+app.get("/getGroupProducts", (req, res) => {
+    if (!req.query.groupId) return;
+    let body;
+    let data = '';
+
+    const request = https.request("https://catalog.roblox.com/v1/search/items/details?Category=3&CreatorType=2&IncludeNotForSale=true&Limit=10&CreatorTargetId=" + req.query.groupId, (response) => {
         response.setEncoding("utf-8");
         response.on('data', (chunk) => {
             data = data + chunk.toString();

@@ -41,11 +41,54 @@ app.get("/getUniverseId", (req, res) => {
     request.end();
 });
 
+app.get('/getGameInfo', (req, res) => {
+    if (!req.query.placeId) return;
+
+    let data = "";
+
+    const request = https.request(`https://games.roblox.com/v1/games/multiget-place-details?placeIds=${req.query.placeId}`, (response) => {
+        response.setEncoding("utf-8");
+        response.on('data', (chunk) => {
+            data = data + chunk.toString();
+        });
+
+        response.on('end', () => {
+            try {
+                res.send(JSON.stringify({ success: true, Info: JSON.parse(data)}));
+            } catch {
+                let message = "An error occured: " +  response.statusMessage;
+                console.log("An error occured when parsing response!");
+                res.send(JSON.stringify({ success: false, message: message}));
+            }
+        });
+    });
+
+    request.on('response', (res) => {
+        try {
+            let message = "An error occured: " +  res.statusMessage;
+            console.log(message);
+            res.send(JSON.stringify({ success: false, message: message}));
+        } catch {
+            console.log("An error occured when receiving response!");
+        }
+    });
+
+    request.on('error', (error) => {
+        try {
+            let message = "An error occured: " +  error;
+            console.log(message);
+            res.send(JSON.stringify({ success: false, message:  message}));
+        } catch {
+            console.log("An error occured when receiving response!");
+        }
+    });
+
+    request.end();
+});
+
 app.get('/getGamepasses', (req, res) => {
     if (!req.query.universeId) return;
-    let body;
-    let data = '';
-
+    let data = "";
     const request = https.request(`https://games.roblox.com/v1/games/${req.query.universeId}/game-passes?limit=10&sortOrder=Asc`, (response) => {
         response.setEncoding("utf-8");
         response.on('data', (chunk) => {
@@ -54,9 +97,7 @@ app.get('/getGamepasses', (req, res) => {
 
         response.on('end', () => {
             try {
-                body = JSON.parse(data);
-                console.log(body);
-                res.send(JSON.stringify({ success: true, Info: body}));
+                res.send(JSON.stringify({ success: true, Info: JSON.parse(data)}));
             } catch {
                 let message = "An error occured: " +  response.statusMessage;
                 console.log("An error occured when parsing response!");
